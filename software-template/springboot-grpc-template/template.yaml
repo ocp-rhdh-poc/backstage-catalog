@@ -40,12 +40,24 @@ spec:
           ui:options:
             allowedKinds:
               - Group
-    - title: Choose a location
+    - title: Choose a location for the application
       required:
-        - repoUrl
+        - repoUrlApplication
       properties:
-        repoUrl:
-          title: Repository Location
+        repoUrlApplication:
+          title: Application Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+    - title: Choose a location for gitops code
+      required:
+        - repoUrlGitops
+      properties:
+        repoUrlGitops:
+          title: Gitops Repository Location
           type: string
           ui:field: RepoUrlPicker
           ui:options:
@@ -66,28 +78,40 @@ spec:
           artifact_id: ${{ parameters.component_id }}
           java_package_name: ${{ parameters.java_package_name }}
           owner: ${{ parameters.owner }}
-          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          destination: ${{ parameters.repoUrlApplication | parseRepoUrl }}
           http_port: 8080
 
-    - id: publish
+    - id: publish-application
       name: Publish
       action: publish:github
       input:
         allowedHosts: ["github.com"]
         description: This is ${{ parameters.component_id }}
-        repoUrl: ${{ parameters.repoUrl }}
+        repoUrl: ${{ parameters.repoUrlApplication }}
+        sourcePath: ./application
+
+    - id: publish-gitops
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ["github.com"]
+        description: This is ${{ parameters.component_id }}
+        repoUrl: ${{ parameters.repoUrlGitops }}
+        sourcePath: ./gitops
 
     - id: register
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        repoContentsUrl: ${{ steps.publish-application.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
 
   output:
     links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Application Repository
+        url: ${{ steps.publish-application.output.remoteUrl }}
+      - title: GitOps Repository
+        url: ${{ steps.publish-gitops.output.remoteUrl }}
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}
