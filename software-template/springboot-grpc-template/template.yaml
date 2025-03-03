@@ -105,7 +105,7 @@ spec:
         title: Deploy ${{ parameters.component_id }} application components
         description: Pull request to deploy application components for ${{ parameters.component_id }}
         sourcePath: ./argocd
-        targetPath: /resources/apps/${{ parameters.component_id }}
+        targetPath: resources/apps/${{ parameters.component_id }}
 
     - id: register
       name: Register
