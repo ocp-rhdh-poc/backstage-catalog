@@ -40,9 +40,10 @@ spec:
           ui:options:
             allowedKinds:
               - Group
-    - title: Choose a location for the application
+    - title: Choose a location
       required:
         - repoUrlApplication
+        - repoUrlGitops
       properties:
         repoUrlApplication:
           title: Application Repository Location
@@ -51,11 +52,6 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-
-    - title: Choose a location for gitops code
-      required:
-        - repoUrlGitops
-      properties:
         repoUrlGitops:
           title: Gitops Repository Location
           type: string
@@ -63,7 +59,6 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-
   steps:
     - id: template
       name: Fetch Skeleton + Template
