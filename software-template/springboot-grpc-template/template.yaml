@@ -74,10 +74,11 @@ spec:
           java_package_name: ${{ parameters.java_package_name }}
           owner: ${{ parameters.owner }}
           destination: ${{ parameters.repoUrlApplication | parseRepoUrl }}
+          destination_gitops: ${{ parameters.repoUrlGitops | parseRepoUrl }}
           http_port: 8080
 
     - id: publish
-      name: Publish
+      name: Publish Application Repo
       action: publish:github
       input:
         allowedHosts: ["github.com"]
@@ -86,13 +87,25 @@ spec:
         sourcePath: ./application
 
     - id: publish-gitops
-      name: Publish
+      name: Publish GitOps Repo
       action: publish:github
       input:
         allowedHosts: ["github.com"]
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrlGitops }}
         sourcePath: ./gitops
+
+    - id: pr-argocd
+      name: Create GitOps PR
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?repo=gitops-infrastructure-apps&owner=ocp-rhdh-poc
+        branchName: deploy-${{ parameters.component_id }}
+        targetBranchName: main
+        title: Deploy ${{ parameters.component_id }} application components
+        description: Pull request to deploy application components for ${{ parameters.component_id }}
+        sourcePath: ./argocd
+        targetPath: /resources/apps/${{ parameters.component_id }}
 
     - id: register
       name: Register
