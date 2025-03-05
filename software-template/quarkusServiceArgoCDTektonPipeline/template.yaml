@@ -80,7 +80,7 @@ spec:
                   title: Image Host
                   type: string
                   description: Host for storing image
-                  default: quay-4z2t2.apps.cluster-4z2t2.4z2t2.sandbox141.opentlc.com
+                  default: quay-4z2t2.apps.67c1045bd8856f9bb04f2985.am1.techzone.ibm.com
                 image_organization:
                   title: Organization
                   type: string
@@ -126,7 +126,7 @@ spec:
           artifact_id: ${{ parameters.artifact_id }}
           java_package_name: ${{ parameters.java_package_name }}
           owner: ${{ user.entity.metadata.name }}
-          cluster: .apps.cluster-4z2t2.4z2t2.sandbox141.opentlc.com
+          cluster: .apps.67c1045bd8856f9bb04f2985.am1.techzone.ibm.com
           host: ${{ parameters.repo.host }}
           destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
           quay_destination: ${{ parameters.image_organization}}/${{ parameters.component_id }}
@@ -159,7 +159,7 @@ spec:
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git
           repository_name: ${{parameters.component_id}}
           git_owner: ${{ parameters.repo.owner }}
-          cluster: .apps.cluster-4z2t2.4z2t2.sandbox141.opentlc.com
+          cluster: .apps.67c1045bd8856f9bb04f2985.am1.techzone.ibm.com
           namespace: ${{ parameters.component_id }}-dev
           image_registry: ${{ parameters.image_registry }}
           image_host: ${{ parameters.image_host }}
