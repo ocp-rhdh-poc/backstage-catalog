@@ -101,7 +101,7 @@ spec:
       required:
         - repoUrl
       properties:
-        repoUrlGitops:
+        repoUrl:
           title: Gitops Repository Location
           type: string
           ui:field: RepoUrlPicker
