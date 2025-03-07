@@ -49,8 +49,6 @@ spec:
             - u1.8xlarge
             - u1.large
             - u1.medium
-            - u1.micro
-            - u1.nano
           enumNames:
             - m1.2xlarge (8 vCPU, 64 GiB RAM)
             - m1.4xlarge (16 vCPU, 128 GiB RAM)
@@ -64,8 +62,6 @@ spec:
             - u1.8xlarge (32 vCPU, 128 GiB RAM)
             - u1.large (2 vCPU, 8 GiB RAM)
             - u1.medium (1 vCPU, 4 GiB RAM)
-            - u1.micro (1 vCPU, 1 GiB RAM)
-            - u1.nano (1 vCPU, 512 MiB RAM)
     - title: Choose a location
       required:
         - repoUrl
