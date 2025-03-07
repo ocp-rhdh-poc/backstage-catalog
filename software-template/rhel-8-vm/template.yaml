@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: RHEL 8 Virtual Machine (OCP-V)
+  name: rhel-8-vm-ocp-v
   title: RHEL 8 Virtual Machine (OCP-V)
   description: Virtual machine with Red Hat Enterprise Linux 8 on OpenShift Virtualization
   tags:
