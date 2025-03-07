@@ -55,7 +55,6 @@ spec:
             - m1.8xlarge (32 vCPU, 256 GiB RAM)
             - m1.large (2 vCPU, 16 GiB RAM)
             - m1.xlarge (4 vCPU, 32 GiB RAM)
-            - n1.2xlarge (16 vCPU, 32 GiB RAM)
             - u1.2xlarge (8 vCPU, 32 GiB RAM)
             - u1.2xmedium (2 vCPU, 4 GiB RAM)
             - u1.4xlarge (16 vCPU, 64 GiB RAM)
