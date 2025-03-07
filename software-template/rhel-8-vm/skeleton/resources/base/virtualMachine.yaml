@@ -6,7 +6,7 @@ metadata:
 spec:
   dataVolumeTemplates:
     - metadata:
-        name: ${{values.component_id}}
+        name: ${{values.component_id + "-volume"}}
       spec:
         sourceRef:
           kind: DataSource
