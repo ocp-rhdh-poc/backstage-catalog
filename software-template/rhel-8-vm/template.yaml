@@ -94,7 +94,21 @@ spec:
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
         sourcePath: ./
-
+    - id: argocd-create
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.component_id }}
+        argoInstance: argoInstance1
+        namespace: default
+        repoUrl: ${{ repoUrl }}
+        path: resources/dev
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
   output:
     links:
       - title: Source Code Repository
