@@ -23,7 +23,7 @@ spec:
           title: Name
           type: string
           description: Unique name of the component
-          default: my-quarkus-app
+          default: my-liberty-app
           ui:field: EntityNamePicker
           maxLength: 23
         group_id:
@@ -34,7 +34,7 @@ spec:
         artifact_id:
           title: Artifact Id
           type: string
-          default: quarkus-app
+          default: liberty-app
           description: Maven Artifact Id
         java_package_name:
           title: Java Package Name
@@ -45,7 +45,7 @@ spec:
           title: Description
           type: string
           description: Help others understand what this website is for.
-          default: A cool quarkus app
+          default: A cool websphere liberty app
     - title: Provide Image Registry Information
       required:
         - image_registry
@@ -191,7 +191,7 @@ spec:
         argoInstance: main
         namespace: openshift-gitops
         repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git
-        path: 'argocd/'
+        path: "argocd/"
 
   output:
     links:
