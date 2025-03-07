@@ -121,6 +121,7 @@ spec:
           description: ${{ parameters.description }}
           owner: ${{ user.entity.metadata.name }}
           destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
+          instance_type: ${{ parameters.instance_type }}
     - id: publish
       name: Publish Repo
       action: publish:github
