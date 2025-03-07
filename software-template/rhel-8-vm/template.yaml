@@ -101,7 +101,7 @@ spec:
         appName: ${{ parameters.component_id }}
         argoInstance: argoInstance1
         namespace: default
-        repoUrl: ${{ repoUrl }}
+        repoUrl: ${{ parameters.repoUrl }}
         path: resources/dev
     - id: register
       name: Register
