@@ -70,7 +70,6 @@ spec:
       action: fetch:template
       input:
         url: "https://github.com/ocp-rhdh-poc/deployment_templates/blob/main/react-web-app/basic-react.yml"
-        copyWithoutTemplating: []
         values:
           name: ${{ parameters.name }}
           memorylimit: ${{ parameters.memorylimit }}
@@ -82,8 +81,8 @@ spec:
       action: publish:github
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}-gitops"
-        title: gitops resources for ${{ parameters.component_id }}
-        description: gitops resources for ${{ parameters.component_id }}
+        title: gitops resources for ${{ parameters.name }}
+        description: gitops resources for ${{ parameters.name }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
 
