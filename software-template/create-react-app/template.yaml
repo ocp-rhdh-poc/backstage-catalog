@@ -48,6 +48,7 @@ spec:
       action: fetch:template
       input:
         url: "https://github.com/ocp-rhdh-poc/react-web-app"
+        targetPath: ./workspace
 
     - id: publish
       name: Publish
@@ -55,6 +56,7 @@ spec:
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}"
         repoVisibility: public
+        sourcePath: ./workspace
 
     - id: register
       name: Register
