@@ -31,7 +31,7 @@ spec:
         namespace:
           title: Namespace of Project
           type: string
-          default: "${{ parameters.name }}-demo"
+          default: "demo"
         repo:
           title: Repository Location
           type: object
