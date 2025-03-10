@@ -86,6 +86,16 @@ spec:
         sourcePath: ./tenant-gitops
         repoVisibility: public
 
+    - id: create-argocd-resources
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.name }}-bootstrap
+        argoInstance: main
+        namespace: openshift-gitops
+        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
+        path: "argocd/"
+
   output:
     links:
       - title: Repository
