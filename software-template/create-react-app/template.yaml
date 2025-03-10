@@ -71,9 +71,9 @@ spec:
       input:
         url: "https://github.com/ocp-rhdh-poc/deployment_templates.git"
         values:
-          name: { { parameters.name } }
-          memorylimit: { { parameters.memorylimit } }
-          source_repository: https://{{ parameters.repo.host }}/{{ parameters.repo.owner }}/{{parameters.name}}.git
+          name: "{{ parameters.name }}" # Correct syntax
+          memorylimit: "{{ parameters.memorylimit }}" # Correct syntax
+          source_repository: "https://{{ parameters.repo.host }}/{{ parameters.repo.owner }}/{{ parameters.name }}.git" # Correct syntax
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
