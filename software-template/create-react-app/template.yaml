@@ -94,7 +94,6 @@ spec:
         argoInstance: main
         namespace: openshift-gitops
         repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
-        path: "argocd/"
 
   output:
     links:
