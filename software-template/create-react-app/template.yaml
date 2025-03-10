@@ -69,7 +69,7 @@ spec:
       name: Generating Deployment Resources
       action: fetch:template
       input:
-        url: "https://github.com/ocp-rhdh-poc/deployment_templates"
+        url: "https://github.com/ocp-rhdh-poc/react-web-apptest-gitops/blob/master/react-web-app/basic-react.yml"
         values:
           name: ${{ parameters.name }}
           memorylimit: ${{ parameters.memorylimit }}
