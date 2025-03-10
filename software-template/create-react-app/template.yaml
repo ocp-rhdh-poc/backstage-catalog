@@ -12,60 +12,49 @@ spec:
   type: website
   parameters:
     - title: Provide some simple information
-      required:
-        - component_id
-        - owner
       properties:
-        component_id:
+        name:
           title: Name
           type: string
-          description: Unique name of the component
+          description: The name assigned to all of the frontend objects defined in this template.
           ui:field: EntityNamePicker
-        description:
-          title: Description
+          default: react-web-app
+        memorylimit:
+          title: Memory Limit
           type: string
-          description: Help others understand what this website is for.
-        owner:
-          title: Owner
-          type: string
-          description: Owner of the component
-          ui:field: OwnerPicker
-          ui:options:
-            allowedKinds:
-              - Group
-    - title: Choose a location
+          description: Maximum amount of memory the container can use.
+          default: 512Mi
+    - title: Application repository Information
       required:
-        - repoUrl
+        - repo
       properties:
-        repoUrl:
+        repo:
           title: Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - github.com
+          type: object
+          properties:
+            host:
+              title: Repo Host
+              type: string
+              description: Your SCM host
+              default: github.com
+            owner:
+              title: Repo Owner
+              type: string
+              description: Your SCM host organization/group
+              default: ocp-rhdh-poc
   steps:
     - id: template
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
-        url: ./skeleton
-        copyWithoutRender:
-          - .github/workflows/*
-        values:
-          component_id: ${{ parameters.component_id }}
-          description: ${{ parameters.description }}
-          destination: ${{ parameters.repoUrl | parseRepoUrl }}
-          owner: ${{ parameters.owner }}
+        url: "https://github.com/ocp-rhdh-poc/react-web-app"
 
     - id: publish
       name: Publish
       action: publish:github
       input:
-        allowedHosts:
-          - github.com
-        description: This is ${{ parameters.component_id }}
-        repoUrl: ${{ parameters.repoUrl }}
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}"
+        repoVisibility: public
 
     - id: register
       name: Register
@@ -73,6 +62,26 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
+
+    - id: generate-github-webhook-secret
+      name: Generate Github Webhook Secret
+      action: builtin:random
+      input:
+        length: 32
+        encoding: base64
+
+    - id: template-gitops-deployment
+      name: Generating Deployment Resources
+      action: fetch:template
+      input:
+        url: "https://github.com/ocp-rhdh-poc/deployment_templates/blob/main/react-web-app/basic-react.yml"
+        copyWithoutTemplating: []
+        values:
+          name: ${{ parameters.name }}
+          memorylimit: ${{ parameters.memorylimit }}
+          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.name}}-gitops.git
+          github_secret: ${{ steps.generate-github-webhook-secret.output.value }}
+        targetPath: ./tenant-gitops
 
   output:
     links:
