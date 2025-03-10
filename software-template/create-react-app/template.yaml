@@ -28,6 +28,10 @@ spec:
       required:
         - repo
       properties:
+        namespace:
+          title: Namespace of Project
+          type: string
+          default: "${{ parameters.name }}-demo"
         repo:
           title: Repository Location
           type: object
@@ -74,6 +78,7 @@ spec:
           name: ${{ parameters.name }}
           memorylimit: ${{ parameters.memorylimit }}
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
+          gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
@@ -85,6 +90,7 @@ spec:
         description: gitops resources for ${{ parameters.name }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
+        namespace: ${{ parameters.namespace }}
 
     - id: create-argocd-resources
       name: Create ArgoCD Resources
@@ -94,7 +100,7 @@ spec:
         argoInstance: main
         namespace: openshift-gitops
         repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
-        path: "react-web-app/"
+        path: "react-web-app/argocd/"
 
   output:
     links:
