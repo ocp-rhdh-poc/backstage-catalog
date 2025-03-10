@@ -53,7 +53,8 @@ spec:
       input:
         url: "https://github.com/ocp-rhdh-poc/react-web-app"
         targetPath: ./workspace
-        name: ${{ parameters.name }}
+        values:
+          name: ${{ parameters.name }}
 
     - id: publish
       name: Publish
