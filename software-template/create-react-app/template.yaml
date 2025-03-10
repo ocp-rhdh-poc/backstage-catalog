@@ -69,18 +69,12 @@ spec:
       name: Generating Deployment Resources
       action: fetch:template
       input:
-        url: "https://github.com/ocp-rhdh-poc/deployment_templates/blob/main/react-web-app/basic-react.yml"
+        url: "https://github.com/ocp-rhdh-poc/deployment_templates"
         values:
           name: ${{ parameters.name }}
           memorylimit: ${{ parameters.memorylimit }}
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.name}}.git
         targetPath: ./tenant-gitops
-
-    - id: debug
-      name: Debug - List Files
-      action: backstage:run
-      input:
-        command: "ls -l ./tenant-gitops"
 
     - id: publish-gitops
       name: Publishing to Resource Repository
