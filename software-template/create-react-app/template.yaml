@@ -31,6 +31,7 @@ spec:
         namespace:
           title: Namespace of Project
           type: string
+          description: Namespace of Project
           default: "demo"
         repo:
           title: Repository Location
@@ -81,6 +82,7 @@ spec:
           memorylimit: ${{ parameters.memorylimit }}
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
           gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
+          namespace: ${{ parameters.namespace }}
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
@@ -92,7 +94,6 @@ spec:
         description: gitops resources for ${{ parameters.name }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
-        namespace: ${{ parameters.namespace }}
 
     - id: create-argocd-resources
       name: Create ArgoCD Resources
