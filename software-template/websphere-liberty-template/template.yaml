@@ -50,15 +50,15 @@ spec:
       required:
         - repo
       properties:
+        namespace:
+          title: Namespace of Project
+          type: string
+          description: Namespace of Project
+          default: "demo"
         repo:
           title: Repository Location
           type: object
           properties:
-            namespace:
-              title: Namespace of Project
-              type: string
-              description: Namespace of Project
-              default: "demo"
             host:
               title: Repo Host
               type: string
