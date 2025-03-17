@@ -9,7 +9,7 @@ metadata:
     - java
     - websphere
     - maven
-    - cicd
+    - CICD
     - tekton
 spec:
   owner: rhdh
@@ -97,6 +97,10 @@ spec:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
 
+    - id: generate-uid
+      name: Generate Unique Identifier
+      action: roadiehq:utils:uuid
+
     - id: template-gitops-deployment
       name: Generating Deployment Resources
       action: fetch:template
@@ -108,7 +112,7 @@ spec:
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
           gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
           namespace: ${{ parameters.namespace }}
-          uid: ${{ entity.metadata.uid }}
+          uid: ${{ steps.generate-uid.output.uuid }}
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
