@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: WebSphere-Liberty-template
+  name: WebSphere-WAS-template
   title: WebSphere Liberty with ArgoCD and Tekton Pipeline
   description: Create a simple WebSphere Liberty app with ArgoCD and Tekton Pipeline
   tags:
