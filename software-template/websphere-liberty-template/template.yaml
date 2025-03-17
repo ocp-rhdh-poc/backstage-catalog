@@ -10,6 +10,7 @@ metadata:
     - websphere-liberty
     - maven
     - cicd
+    - tekton
 spec:
   owner: rhdh
   type: service
