@@ -2,45 +2,34 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: WebSphere-Liberty-template
-  title: WebSphere Liberty with ArgoCD and OC build config
-  description: Create a simple WebSphere Liberty app with ArgoCD and OC build config
+  title: WebSphere Liberty with ArgoCD and Tekton Pipeline
+  description: Create a simple WebSphere Liberty app with ArgoCD and Tekton Pipeline
   tags:
     - recommended
     - java
     - websphere-liberty
     - maven
-    - CICD
+    - cicd
 spec:
   owner: rhdh
   type: service
   parameters:
     - title: Provide Information for Application
       required:
-        - component_id
-        - java_package_name
+        - name
       properties:
-        component_id:
+        name:
           title: Name
           type: string
-          description: Unique name of the component
+          description: Repo name
           default: my-liberty-app
           ui:field: EntityNamePicker
           maxLength: 23
-        group_id:
-          title: Group Id
+        image_name:
+          title: Image name
           type: string
-          default: redhat.janus
-          description: Maven Group Id
-        artifact_id:
-          title: Artifact Id
-          type: string
-          default: liberty-app
-          description: Maven Artifact Id
-        java_package_name:
-          title: Java Package Name
-          default: org.redhat.janus
-          type: string
-          description: Name for the java package. eg (com.redhat.blah)
+          default: mylibertyapp
+          description: Image Name
         description:
           title: Description
           type: string
@@ -54,44 +43,9 @@ spec:
           title: Image Registry
           type: string
           enum:
-            - Openshift
-            - Quay
-      dependencies:
-        image_registry:
-          oneOf:
-            - properties:
-                image_registry:
-                  enum:
-                    - Openshift
-                image_host:
-                  title: Image Host
-                  type: string
-                  description: Host for storing image
-                  default: image-registry.openshift-image-registry.svc:5000
-                image_tag:
-                  title: Image Tag
-                  default: latest
-                  type: string
-                  description: Build Image tag
-            - properties:
-                image_registry:
-                  enum:
-                    - Quay
-                image_host:
-                  title: Image Host
-                  type: string
-                  description: Host for storing image
-                  default: quay-4z2t2.apps.67c1045bd8856f9bb04f2985.am1.techzone.ibm.com
-                image_organization:
-                  title: Organization
-                  type: string
-                  description: Name of the Quay Organization
-                  default: quayadmin
-                image_tag:
-                  title: Image Tag
-                  default: latest
-                  type: string
-                  description: Build Image tag
+            - Tekton Pipeline
+            - OpenShift Build Config
+            - Github Action
     - title: Application repository Information
       required:
         - repo
@@ -100,6 +54,11 @@ spec:
           title: Repository Location
           type: object
           properties:
+            namespace:
+              title: Namespace of Project
+              type: string
+              description: Namespace of Project
+              default: "demo"
             host:
               title: Repo Host
               type: string
@@ -116,70 +75,47 @@ spec:
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
-        url: ./skeleton
-        copyWithoutTemplating:
-          - .github/workflows/*
+        url: "https://github.com/mattbman23/wasAppMod"
+        targetPath: ./workspace
         values:
-          component_id: ${{ parameters.component_id }}
-          description: ${{ parameters.description }}
-          namespace: ${{ parameters.component_id }}-dev
-          group_id: ${{ parameters.group_id }}
-          artifact_id: ${{ parameters.artifact_id }}
-          java_package_name: ${{ parameters.java_package_name }}
-          owner: ${{ user.entity.metadata.name }}
-          cluster: .apps.67c1045bd8856f9bb04f2985.am1.techzone.ibm.com
-          host: ${{ parameters.repo.host }}
-          destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
-          quay_destination: ${{ parameters.image_organization}}/${{ parameters.component_id }}
-          port: 8080
+          name: ${{ parameters.name }}
+          namespace: ${{ parameters.namespace }}
 
     - id: publish
       name: Publish
       action: publish:github
       input:
-        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}"
         repoVisibility: public
+        sourcePath: ./workspace
 
-    # - id: register
-    #   name: Register
-    #   action: catalog:register
-    #   input:
-    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-    #     catalogInfoPath: "/catalog-info.yaml"
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
 
     - id: template-gitops-deployment
       name: Generating Deployment Resources
       action: fetch:template
       input:
-        url: ./manifests
-        copyWithoutTemplating: []
+        url: "https://github.com/ocp-rhdh-poc/deployment_templates.git"
         values:
-          component_id: ${{ parameters.component_id }}
-          description: ${{ parameters.description }}
-          destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git
-          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git
-          repository_name: ${{parameters.component_id}}
-          git_owner: ${{ parameters.repo.owner }}
-          cluster: .apps.67c1045bd8856f9bb04f2985.am1.techzone.ibm.com
-          namespace: ${{ parameters.component_id }}-dev
-          image_registry: ${{ parameters.image_registry }}
-          image_host: ${{ parameters.image_host }}
-          image_organization: ${{ parameters.image_organization }}
-          image_name: ${{ parameters.component_id }}
-          image_tag: ${{ parameters.image_tag }}
-          port: 8080
-          repository_host: ${{ parameters.repo.host }}
-          deployment_name: quarkus-template
-          user: ${{ user.entity.metadata.name }}
+          name: ${{ parameters.name }}
+          memorylimit: ${{ parameters.memorylimit }}
+          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
+          gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
+          namespace: ${{ parameters.namespace }}
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
       name: Publishing to Resource Repository
       action: publish:github
       input:
-        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}-gitops"
-        title: gitops resources for ${{ parameters.component_id }}
-        description: gitops resources for ${{ parameters.component_id }}
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}-gitops"
+        title: gitops resources for ${{ parameters.name }}
+        description: gitops resources for ${{ parameters.name }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
 
@@ -187,16 +123,15 @@ spec:
       name: Create ArgoCD Resources
       action: argocd:create-resources
       input:
-        appName: ${{ parameters.component_id }}-bootstrap
+        appName: ${{ parameters.name }}-bootstrap
         argoInstance: main
         namespace: openshift-gitops
-        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git
-        path: "argocd/"
-
+        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
+        path: "java-was-app/argocd/"
   output:
     links:
-      - title: Source Code Repository
+      - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}
-      - title: Open Component in catalog
+      - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}
