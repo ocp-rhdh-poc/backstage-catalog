@@ -108,6 +108,7 @@ spec:
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
           gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
           namespace: ${{ parameters.namespace }}
+          uid: ${{ entity.metadata.uid }}
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
