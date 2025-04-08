@@ -1,0 +1,111 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Ecommerce-template
+  title: Create an Ecommerce Template
+  description: Create a ecommerce microservice app with ArgoCD
+  tags:
+    - recommended
+    - microservice
+    - grpc
+    - argocd
+    - golang
+spec:
+  owner: rhdh
+  type: service
+  parameters:
+    - title: Provide Information for Application
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Repo name
+          default: my-ecommerce-app
+          ui:field: EntityNamePicker
+          maxLength: 23
+        image_name:
+          title: Image name
+          type: string
+          default: myecommerceapp
+          description: Image Name
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this website is for.
+          default: A cool websphere ecommerce app
+    - title: Application repository Information
+      required:
+        - repo
+      properties:
+        namespace:
+          title: Namespace of Project
+          type: string
+          description: Namespace of Project
+          default: "demo"
+        repo:
+          title: Repository Location
+          type: object
+          properties:
+            host:
+              title: Repo Host
+              type: string
+              description: Your SCM host
+              default: github.com
+            owner:
+              title: Repo Owner
+              type: string
+              description: Your SCM host organization/group
+              default: ocp-rhdh-poc
+  steps:
+    - id: generate-uid
+      name: Generate Unique Identifier
+      action: roadiehq:utils:uuid
+
+    - id: template-gitops-deployment
+      name: Generating Deployment Resources
+      action: fetch:template
+      input:
+        url: "https://github.com/ocp-rhdh-poc/deployment_templates.git"
+        values:
+          name: ${{ parameters.name }}
+          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
+          gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
+          namespace: ${{ parameters.namespace }}
+          uid: ${{ steps.generate-uid.output.uuid }}
+        targetPath: ./tenant-gitops
+
+    - id: publish-gitops
+      name: Publishing to Resource Repository
+      action: publish:github
+      input:
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}-gitops"
+        title: gitops resources for ${{ parameters.name }}
+        description: gitops resources for ${{ parameters.name }}
+        sourcePath: ./tenant-gitops
+        repoVisibility: public
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish-gitops.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+    - id: create-argocd-resources
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.name }}-bootstrap
+        argoInstance: main
+        namespace: openshift-gitops
+        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
+        path: "ecommerce/argocd/"
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
