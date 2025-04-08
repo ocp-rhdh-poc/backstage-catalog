@@ -71,8 +71,8 @@ spec:
           namespace: ${{ parameters.namespace }}
         targetPath: ./tenant-gitops
 
-    - id: publish-gitops
-      name: Publishing to Resource Repository
+    - id: publish
+      name: Publish
       action: publish:github
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}-gitops"
@@ -81,12 +81,12 @@ spec:
         sourcePath: ./tenant-gitops
         repoVisibility: public
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish-gitops.output.repoContentsUrl }}
-        catalogInfoPath: "/catalog-info.yaml"
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+    #     catalogInfoPath: "/catalog-info.yaml"
 
     - id: create-argocd-resources
       name: Create ArgoCD Resources
