@@ -2,13 +2,14 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: create-react-app-template
-  title: Create React App Template
-  description: Create a new CRA website project
+  title: React Truckroll Recommendation
+  description: Create a React UI
   tags:
     - react
     - cra
+    - build config
 spec:
-  owner: web@example.com
+  owner: rhdh
   type: website
   parameters:
     - title: Provide some simple information
@@ -81,7 +82,7 @@ spec:
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
-        url: "https://github.com/ocp-rhdh-poc/react-web-app"
+        url: "https://github.com/ocp-rhdh-poc/generic_truckroll_recommendation"
         targetPath: ./workspace
         values:
           name: ${{ parameters.name }}
