@@ -9,7 +9,7 @@ metadata:
     - java
     - websphere
     - maven
-    - CICD
+    - cicd
     - tekton
 spec:
   owner: rhdh
