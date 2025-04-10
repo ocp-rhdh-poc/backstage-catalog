@@ -72,6 +72,35 @@ spec:
               default: ocp-rhdh-poc
 
   steps:
+    - id: create-instana-monitoring
+      name: Create Instana Monitoring
+      action: http:backstage:request
+      input:
+        method: POST
+        path: /proxy/instana/api/application-monitoring/settings/application  
+        headers:
+          content-type: 'application/json'
+        body:
+          label: "ATT-RHDH-${{ parameters.name }}"
+          scope: INCLUDE_ALL_DOWNSTREAM
+          boundaryScope: ALL
+          builtInAlertIds: []
+          tagFilterExpression:
+            type: EXPRESSION
+            logicalOperator: AND
+            elements:
+              - type: TAG_FILTER
+                name: kubernetes.namespace.name
+                operator: EQUALS
+                entity: DESTINATION
+                value: ${{ parameters.namespace }}
+              - type: TAG_FILTER
+                name: kubernetes.label
+                operator: EQUALS
+                entity: DESTINATION
+                key: rhdh.app
+                value: ${{ parameters.name }} 
+                
     - id: template
       name: Fetch Skeleton + Template
       action: fetch:template
@@ -81,6 +110,7 @@ spec:
         values:
           name: ${{ parameters.name }}
           namespace: ${{ parameters.namespace }}
+          instanalink: ${{ steps['create-instana-monitoring'].output.body.id }}
 
     - id: publish
       name: Publish
