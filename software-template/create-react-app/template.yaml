@@ -7,7 +7,7 @@ metadata:
   tags:
     - react
     - cra
-    - build config
+    - buildconfig
 spec:
   owner: rhdh
   type: website
