@@ -126,10 +126,7 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
-
-    - id: generate-uid
-      name: Generate Unique Identifier
-      action: roadiehq:utils:uuid
+ 
 
     - id: template-gitops-deployment
       name: Generating Deployment Resources
@@ -141,8 +138,7 @@ spec:
           memorylimit: ${{ parameters.memorylimit }}
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}.git
           gitops_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.name }}-gitops.git
-          namespace: ${{ parameters.namespace }}
-          uid: ${{ steps.generate-uid.output.uuid }}
+          namespace: ${{ parameters.namespace }} 
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
