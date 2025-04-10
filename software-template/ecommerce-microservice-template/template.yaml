@@ -85,7 +85,7 @@ spec:
                 name: kubernetes.deployment.label
                 operator: EQUALS
                 entity: DESTINATION
-                key: app.kubernetes.io/instance
+                key: backstage.io/kubernetes-id
                 value: ${{ parameters.name }} 
     
     - id: template
