@@ -126,8 +126,8 @@ spec:
           namespace: ${{ parameters.namespace }}
         targetPath: ./tenant-gitops
 
-    - id: publish
-      name: Publish
+    - id: publishgitops
+      name: Publish GitOps
       action: publish:github
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.name}}-gitops"
